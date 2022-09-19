@@ -1,4 +1,4 @@
-module main.go
+module github.com/alwashali/elephant
 
 go 1.18
 
