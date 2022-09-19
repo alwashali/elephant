@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/urfave/cli/v2"
-	"main.go/core"
+	"github.com/alwashali/elephant/core"
 )
 
 func main() {
