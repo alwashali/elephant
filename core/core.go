@@ -9,7 +9,7 @@ import (
 
 	"github.com/dgraph-io/badger"
 	"github.com/gorilla/mux"
-	"main.go/cache"
+	"github.com/alwashali/elephant/cache"
 )
 
 var db *badger.DB
