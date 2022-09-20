@@ -1,0 +1,12 @@
+package options
+
+var db *badger.DB
+
+type opts struct {
+	Learning bool
+	TTL      string
+}
+
+var Options = opts{
+	Learning: false,
+}
