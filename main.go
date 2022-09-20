@@ -4,8 +4,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/urfave/cli/v2"
 	"github.com/alwashali/elephant/core"
+	"github.com/urfave/cli/v2"
 )
 
 func main() {
@@ -19,10 +19,13 @@ func main() {
 				Name:        "ttl",
 				Value:       "",
 				Usage:       "Time to live for the cache",
-				Destination: &core.Options.TTL,
+				Destination: opts.,
 			},
 		},
 		Action: func(cCtx *cli.Context) error {
+			if Options.TTL != "" {
+				core.Run(Options)
+			}
 
 			return nil
 		},
