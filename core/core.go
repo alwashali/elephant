@@ -7,20 +7,25 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/alwashali/elephant/cache"
-
 	"github.com/dgraph-io/badger"
 	"github.com/gorilla/mux"
+	"main.go/cache"
 )
 
 var db *badger.DB
 
+type opts struct {
+	Learning bool
+	TTL      string
+}
+
+var Options = opts{
+	Learning: false,
+}
+
 func init() {
 
-	badgerOpts := badger.Options{}
-	badgerOpts.WithEventLogging(false)
-	badgerOpts.WithDir("./KVDS")
-	db, _ = badger.Open(badgerOpts)
+	db, _ = badger.Open(badger.DefaultOptions("./KVDS"))
 
 }
 
@@ -48,11 +53,11 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println(r.Host, r.URL.Path, r.URL.Scheme, r.Method)
 	key := cacheKey(r)
-	fmt.Println("cache key: ", string(key))
+	fmt.Println(string(key))
 
 	if cache.IsChached(db, key) {
 		fmt.Println("return from cache")
-		if true {
+		if !Options.Learning {
 			fmt.Fprintf(w, string(cache.GetItem(db, key)))
 		}
 
@@ -75,8 +80,6 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetCache() string {
-
-	fmt.Println("checking cache")
 	cacheContent := cache.GetCachedKeys(db)
 	if len(cacheContent) == 0 {
 		return "empty"

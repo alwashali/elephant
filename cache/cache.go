@@ -4,9 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"log"
-	"time"
 
-	opts "github.com/alwashali/elephant/options"
 	"github.com/dgraph-io/badger"
 )
 
@@ -48,7 +46,7 @@ func IsChached(db *badger.DB, key []byte) bool {
 			if bytes.Compare(k, key) == 0 {
 				found = true
 			}
-
+			//fmt.Printf("key=%s\n", string(k))
 		}
 		return nil
 	})
@@ -59,14 +57,8 @@ func IsChached(db *badger.DB, key []byte) bool {
 }
 
 func Cache(db *badger.DB, key []byte, value []byte) bool {
-	cacheDuraiton, err := time.ParseDuration(opts.TTL)
-	if err != nil {
-		log.Panic(err)
-	}
-	fmt.Println("New Entry...", cacheDuraiton.String())
-	err = db.Update(func(txn *badger.Txn) error {
-		e := badger.NewEntry(key, value).WithTTL(cacheDuraiton)
-		err := txn.SetEntry(e)
+	err := db.Update(func(txn *badger.Txn) error {
+		err := txn.Set(key, value)
 		return err
 	})
 	if err != nil {

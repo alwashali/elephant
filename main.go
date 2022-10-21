@@ -1,15 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
-	"time"
-
-	"github.com/alwashali/elephant/core"
-	opts "github.com/alwashali/elephant/options"
 
 	"github.com/urfave/cli/v2"
+	"main.go/core"
 )
 
 func main() {
@@ -22,18 +18,12 @@ func main() {
 			&cli.StringFlag{
 				Name:        "ttl",
 				Value:       "",
-				Usage:       "Time to live for the cache, example: 24h",
-				Destination: &opts.TTL,
+				Usage:       "Time to live for the cache",
+				Destination: &core.Options.TTL,
 			},
 		},
 		Action: func(cCtx *cli.Context) error {
-			if opts.TTL != "" {
-				fmt.Printf("\n\n")
-				cacheDuration, _ := time.ParseDuration(opts.TTL)
-				fmt.Println("Caching Duration: ", cacheDuration.String())
-				core.Run()
 
-			}
 			return nil
 		},
 	}
