@@ -29,11 +29,13 @@ func init() {
 
 }
 
-func cacheKey(req *http.Request) []byte {
-	/*cache key structure
+func GenerateCacheKey(req *http.Request) []byte {
+	/*
+		Comptuer the cache key that will be used to know if the request is cached.
 
-	GET  -> method.host.url
-	POST -> method.host.url.postparameters
+		cache key structure:
+		GET  -> method.host.url
+		POST -> method.host.url.postparameters
 
 	*/
 	key := ""
@@ -44,27 +46,35 @@ func cacheKey(req *http.Request) []byte {
 		key += "."
 		key += req.URL.Path
 
+	} else if req.Method == "POST" {
+		key += "GET"
+		key += "."
+		key += req.Host
+		key += "."
+		key += req.URL.Path
+		//to do the post parameters
+
 	}
+
 	return []byte(key)
 
 }
 
 func handleRequest(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Println(r.Host, r.URL.Path, r.URL.Scheme, r.Method)
-	key := cacheKey(r)
-	fmt.Println(string(key))
+	//fmt.Println(r.Host, r.URL.Path, r.URL.Scheme, r.Method)
+	key := GenerateCacheKey(r)
 
 	if cache.IsChached(db, key) {
-		fmt.Println("return from cache")
+		fmt.Println("Return from cache...")
+		fmt.Println("Cache key: ", string(key))
 		if !Options.Learning {
 			fmt.Fprintf(w, string(cache.GetItem(db, key)))
 		}
 
-	} else { // pass to upstream
+	} else { // pass to upstream if not cached
 
-		fmt.Printf("New Request: %s \n", string(key))
-
+		fmt.Printf("Caching the request: %s \n", string(key))
 		r.RequestURI = ""
 		resp, err := http.DefaultClient.Do(r)
 		if err != nil {
@@ -74,11 +84,14 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 
 		bodyContent, _ := ioutil.ReadAll(resp.Body)
 		cache.Cache(db, key, bodyContent)
+
 		fmt.Fprintf(w, string(bodyContent))
 	}
+	fmt.Println()
 
 }
 
+// Generate report of the cached elements
 func GetCache() string {
 	cacheContent := cache.GetCachedKeys(db)
 	if len(cacheContent) == 0 {

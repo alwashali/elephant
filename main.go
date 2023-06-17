@@ -12,18 +12,19 @@ func main() {
 
 	app := &cli.App{
 		Name:  "Elephant cache",
-		Usage: "Run the server with TTL to cache everything pass through",
+		Usage: "Run the server with TTL to cache everything passes through",
 
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:        "ttl",
 				Value:       "",
 				Usage:       "Time to live for the cache",
+				Required:    true,
 				Destination: &core.Options.TTL,
 			},
 		},
-		Action: func(cCtx *cli.Context) error {
-
+		Action: func(Ctx *cli.Context) error {
+			core.Run()
 			return nil
 		},
 	}
